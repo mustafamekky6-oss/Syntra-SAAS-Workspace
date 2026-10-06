@@ -1,0 +1,210 @@
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+@import 'tailwindcss';
+
+/* Dark mode will be driven by a `.dark` class on <html> (designed in a later phase). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------
+   Syntra design tokens — derived from DESIGN.md (monochrome, hairline
+   borders, Geist Sans for reading / Geist Mono for stamping).
+   Two layers:
+     1. Semantic CSS variables on :root  → what components use.
+     2. @theme inline                    → exposes them as Tailwind utilities.
+   Components should use the semantic names (bg-canvas, text-fg-muted…),
+   so dark mode only needs to override layer 1 later.
+------------------------------------------------------------------- */
+
+:root {
+  /* Palette primitives (DESIGN.md) */
+  --paper: #fafafa;
+  --white: #ffffff;
+  --hairline: #ebebeb;
+  --ash: #c9c9c9;
+  --smoke: #a8a8a8;
+  --graphite: #8f8f8f;
+  --slate: #7d7d7d;
+  --stone: #666666;
+  --charcoal: #4d4d4d;
+  --obsidian: #171717;
+  --carbon: #000000;
+  --terminal-green: #297a3a;
+
+  /* Semantic — light theme */
+  --canvas: var(--paper);
+  --surface: var(--white);
+  --surface-inverse: var(--obsidian);
+  --border: var(--hairline);
+  --fg: var(--obsidian);
+  --fg-muted: var(--charcoal);
+  --fg-subtle: var(--stone);
+  --fg-faint: var(--smoke);
+  --fg-disabled: var(--ash);
+  --fg-inverse: var(--white);
+  --accent: var(--terminal-green);
+  --brand: var(--carbon);
+  --primary: #4f46e5;
+
+  /* Hairline ring "borders" (no drop shadows for elevation) */
+  --ring-card: 0 0 0 1px rgb(0 0 0 / 0.08), 0 0 0 2px var(--paper);
+  --ring-hairline: 0 0 0 1px var(--hairline);
+}
+
+@theme inline {
+  /* Restricted palette: the system is monochrome by design. */
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-inverse: var(--surface-inverse);
+  --color-border: var(--border);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-fg-faint: var(--fg-faint);
+  --color-fg-disabled: var(--fg-disabled);
+  --color-fg-inverse: var(--fg-inverse);
+  --color-accent: var(--accent);
+  --color-brand: var(--brand);
+  --color-primary: var(--primary);
+
+  /* Fonts */
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Type scale (DESIGN.md) + a 14px UI size for dense app chrome */
+  --text-eyebrow: 11px;
+  --text-eyebrow--line-height: 1.5;
+  --text-caption: 13px;
+  --text-caption--line-height: 1.54;
+  --text-ui: 14px;
+  --text-ui--line-height: 1.43;
+  --text-body: 16px;
+  --text-body--line-height: 1.5;
+  --text-heading: 30px;
+  --text-heading--line-height: 1.1;
+  --text-heading--letter-spacing: -1.5px;
+  --text-heading-lg: 56px;
+  --text-heading-lg--line-height: 1;
+  --text-heading-lg--letter-spacing: -3.36px;
+  --text-display: 64px;
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -3.84px;
+
+  --tracking-eyebrow: 0.071em;
+
+  /* Radii: sharp by design (max 6px for rectangles) */
+  --radius-*: initial;
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 6px;
+  --radius-full: 9999px;
+
+  /* Elevation: hairline rings only */
+  --shadow-*: initial;
+  --shadow-none: none;
+  --shadow-ring: var(--ring-card);
+  --shadow-hairline: var(--ring-hairline);
+
+  /* Layout */
+  --container-page: 1280px;
+}
+
+@layer base {
+  html {
+    background-color: var(--canvas);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-feature-settings: 'calt' 0, 'rlig' 1, 'ss11' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100vh;
+    font-size: var(--text-ui);
+    line-height: 1.43;
+  }
+
+  ::selection {
+    background-color: var(--obsidian);
+    color: var(--white);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 2px;
+  }
+
+  /* Headlines speak at weight 400–450, never bold */
+  h1, h2, h3, h4 {
+    font-weight: 450;
+  }
+}
+
+@layer components {
+  /* Geist Mono stamp used for eyebrows, labels and metadata */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    line-height: 1.5;
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+}
+
+html { scroll-behavior: smooth; }
+section[id] { scroll-margin-top: 72px; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.rise { animation: rise 0.6s ease-out both; }
+.rise-2 { animation-delay: 0.12s; }
+.rise-3 { animation-delay: 0.24s; }
+@media (prefers-reduced-motion: reduce) { .rise { animation: none; } html { scroll-behavior: auto; } }
+
+:root.dark {
+  --canvas: #0a0a0a;
+  --surface: #111111;
+  --surface-inverse: #ededed;
+  --border: #262626;
+  --fg: #ededed;
+  --fg-muted: #a1a1a1;
+  --fg-subtle: #8f8f8f;
+  --fg-faint: #666666;
+  --fg-disabled: #444444;
+  --fg-inverse: #0a0a0a;
+  --brand: #ffffff;
+  --primary: #818cf8;
+  --ring-card: 0 0 0 1px rgb(255 255 255 / 0.1);
+  --ring-hairline: 0 0 0 1px #262626;
+}
+:root.dark ::selection { background-color: #ededed; color: #0a0a0a; }
+
+/* ---- Landing motion (CSS-only, transform/opacity) ---- */
+.ambient { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; }
+.ambient::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 56px 56px; opacity: 0.45; mask-image: radial-gradient(ellipse at 50% 0%, #000 20%, transparent 70%); -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 20%, transparent 70%); }
+.orb { position: absolute; width: 38rem; height: 38rem; border-radius: 9999px; background: radial-gradient(closest-side, color-mix(in srgb, var(--primary) 16%, transparent), transparent); animation: drift 26s ease-in-out infinite alternate; }
+@keyframes drift { from { transform: translate3d(-5%, 0, 0); } to { transform: translate3d(6%, 8%, 0); } }
+@keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+.floaty { animation: floaty 6s ease-in-out infinite; }
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@keyframes sharpen { from { opacity: 0; filter: blur(8px); transform: translateY(12px); } to { opacity: 1; filter: none; transform: none; } }
+.sharpen { animation: sharpen 0.7s ease-out both; }
+@keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.draw { stroke-dasharray: 1; animation: draw 1.4s ease-out 0.5s both; }
+@keyframes grow { from { width: 0; } }
+.grow { animation: grow 1.2s ease-out 0.6s both; }
+.page { animation: rise 0.25s ease-out both; }
+.acc { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.25s ease; }
+.acc.open { grid-template-rows: 1fr; }
+@media (prefers-reduced-motion: reduce) {
+  .orb, .floaty, .sharpen, .draw, .grow, .page { animation: none; }
+  .draw { stroke-dasharray: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .acc { transition: none; }
+}
